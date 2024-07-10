@@ -1,0 +1,41 @@
+<!-- Rules Compiled by F4nxs -->
+<!-- Rule is for testing-->
+
+<group name="windows,sysmon,">
+<!-- ############################################################################### -->
+<!-- Alert based on sysmon event ID 1, for cmd, powershell or xcopy execution-->
+<!-- ############################################################################### -->
+<rule id="101036" level="0">
+ <if_sid>61603</if_sid>
+   <field name="win.eventdata.originalfilename" type="pcre2">(Cmd\.Exe|CMD\.EXE|Powershell\.Exe|POWERSHELL\.EXE|XCOPY\.EXE|xcopy\.Exe|Pwsh\.Exe|PWSH\.EXE|esentutl\.exe|ESENTUTL\.EXE|CertUtil\.exe)</field>
+   <description></description>
+ <options>no_full_log</options>
+ <group>sysmon_event1,</group>
+</rule>
+<!-- ############################################################################### -->
+<!-- Alert based on sysmon event ID 1, Process access Sensitive Hives-->
+<!-- ############################################################################### -->
+<rule id="101037" level="15">
+ <if_sid>101036</if_sid>
+   <field name="win.eventdata.commandline" type="pcre2">(HKLM\\sam|HKLM\\system|HKLM\\security|\\config\\SAM|\/config\/SAM|\/vss)</field>
+   <description>Sensitive Hive Accesed by $(win.eventdata.sourceimage)</description>
+    <mitre>
+     <id>T1003.002</id>
+    </mitre>
+ <options>no_full_log</options>
+ <group>sysmon_event1,</group>
+</rule>
+<!-- ############################################################################### -->
+<!-- Alert based on sysmon event ID 1, Process access PowerDump execution-->
+<!-- ############################################################################### -->
+<rule id="101038" level="15">
+ <if_sid>101036</if_sid>
+   <field name="win.eventdata.commandline" type="pcre2">(Invoke\-PowerDump|Dump\.ps1|dump\.ps1|PowerDump|powerdump)</field>
+   <description>Powerdump executed</description>
+    <mitre>
+     <id>T1003.002</id>
+    </mitre>
+ <options>no_full_log</options>
+ <group>sysmon_event1,</group>
+</rule>
+</group>
