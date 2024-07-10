@@ -1,0 +1,71 @@
+<!-- Rules Compiled by F4nxs -->
+<!-- This rule is for testing -->
+
+<group name="windows,sysmon,">
+<!-- ############################################################################### -->
+<!-- Alert based on sysmon event ID 10, for process accesing Lsass.exe-->
+<!-- ############################################################################### -->
+<rule id="101031" level="0">
+ <if_sid>61612</if_sid>
+   <field name="win.eventdata.targetimage">lsass.exe</field>
+   <description>Sysmon - Event 10: Lsaas.exe ProcessAccess by $(win.eventdata.sourceimage)</description>
+    <mitre>
+     <id>T1003.001</id>
+    </mitre>
+ <options>no_full_log</options>
+ <group>sysmon_event_10,</group>
+</rule>
+<!-- ############################################################################### -->
+<!-- Alert based on sysmon event ID 10, for process accesing Lsass.exe and loading suspicious DLL for credential access-->
+<!-- ############################################################################### -->
+<rule id="101032" level="15">
+ <if_sid>101031</if_sid>
+   <field name="win.eventdata.calltrace" type="pcre2">(dbgcore\.dll|dbgcore\.DLL|comsvcs\.dll|comsvcs\.DLL|dbghelp\.dll|dbghelp\.DLL)</field>
+   <description>Lsaas.exe ProcessAccess by $(win.eventdata.sourceimage) loading suspicious DLL (dbgcore.dll or dbghelp.dll or cosvcs.dll)</description>
+    <mitre>
+     <id>T1003.001</id>
+    </mitre>
+ <options>no_full_log</options>
+ <group>sysmon_event_10,</group>
+</rule>
+<!-- ############################################################################### -->
+<!-- Alert based on sysmon event ID 11, for process creating a dump file of lsass on system-->
+<!-- ############################################################################### -->
+<rule id="101033" level="15">
+ <if_sid>61613</if_sid>
+   <field name="win.eventdata.targetFilename" type="pcre2">(\.dmp|\.DMP)</field>
+   <description>Process Dump File created by $(win.eventdata.image)</description>
+    <mitre>
+     <id>T1003.001</id>
+    </mitre>
+ <options>no_full_log</options>
+ <group>sysmon_event_11,</group>
+</rule>
+<!-- ############################################################################### -->
+<!-- Alert based on sysmon event ID 10, for process accesing Lsass.exe and loading suspicious python libraries-->
+<!-- ############################################################################### -->
+<rule id="101034" level="15">
+ <if_sid>101031</if_sid>
+   <field name="win.eventdata.calltrace" type="pcre2">(\_ctypes\.pyd|libffi\-7\.dll)</field>
+   <description>Lsaas.exe ProcessAccess by $(win.eventdata.sourceimage) And loading suspicious DLL (_ctypes.pyd or libffi-7.dll )</description>
+    <mitre>
+     <id>T1003.001</id>
+    </mitre>
+ <options>no_full_log</options>
+ <group>sysmon_event_10,</group>
+</rule>
+<!-- ############################################################################### -->
+<!-- Alert based on sysmon event ID 10, for process accesing Lsass.exe and loading Unknown Libraries-->
+<!-- ############################################################################### -->
+<rule id="101035" level="15">
+ <if_sid>101031</if_sid>
+   <field name="win.eventdata.calltrace" type="pcre2">(unknown|UNKNOWN)</field>
+   <description>Lsaas.exe ProcessAccess by $(win.eventdata.sourceimage) And loading unknown libraries</description>
+    <mitre>
+     <id>T1003.001</id>
+    </mitre>
+ <options>no_full_log</options>
+ <group>sysmon_event_10,</group>
+</rule>
+<!-- ############################################################################### -->
+</group>
